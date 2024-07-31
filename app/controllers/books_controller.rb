@@ -1,9 +1,19 @@
 class BooksController < ApplicationController
   before_action :set_book, only: %i[ show edit update destroy ]
+  skip_before_action :verify_authenticity_token
 
   # GET /books or /books.json
   def index
     @books = Book.all
+  end
+
+  def bulk_delete_books
+    respond_to do |format|
+      @books = Book.where(id: params[:book_ids])
+      @books.delete_all
+      format.js
+
+    end
   end
 
   # GET /books/1 or /books/1.json
